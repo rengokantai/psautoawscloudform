@@ -40,7 +40,8 @@ Ex:
           "AssociatePublicIpAddress":"true",
           "DeviceIndex":"0",
           "GroupSet":[{"Ref":"SecurityGroup"}],
-          "SubnetId":{"Ref":"Subnet"}
+          "SubnetId":{"Ref":"Subnet"},
+          "UserData":...
         }],
         "Tags":[{
           "key":"Name",
@@ -79,4 +80,39 @@ Ex:
     }
   }
 ```
-    
+using command:
+```
+aws cloudformation create-stack --stack-name name --template-body file://temp.json --parameters ParameterKey=VPC,ParameterValue=vpc-12345 \
+ParameterKey=Subnet,ParameterValue=subnet-12345 \
+ParameterKey=KeyPair,ParameterValue=mykey \
+ParameterKey=InstanceType,ParameterValue=t2.micro \
+```
+The "Outputs" will show using
+```
+aws cloudformation --describe-stacks
+```
+#####Building more powerful.
+######mappings
+######Pseudo param
+AWS::AccountId  
+AWS::NotificationARNs  
+AWS::NoValue   //removes attr  
+AWS::Region  
+AWS::StackId  
+AWS::StackName
+######user data
+some usage:
+```
+{"Fn::Join":[";",["a","b","c"]]}
+{"Fn::Base64":"string"}
+```
+######useit
+```
+"UserData":{"Fn":"Base64":{"Fn::Join":["\n",[
+  "#!/bin/bash -ex",
+  "yum install -y httpd",
+  "cd /var/www/html",
+  "echo '<html>test</html>' > index.html",
+  "service httpd start"
+]]}}
+```
